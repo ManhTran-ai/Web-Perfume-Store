@@ -1,0 +1,15 @@
+@model GuhaStore.Core.Entities.Article
+@{
+    ViewData["Title"] = "Xóa bài viết";
+}
+
+<div class="container">
+    <h2>Xóa bài viết</h2>
+    <p>Bạn có chắc muốn xóa <strong>@Model.ArticleTitle</strong>?</p>
+    <form asp-action="DeleteConfirmed" method="post">
+        <input type="hidden" asp-for="ArticleId" />
+        <button class="btn btn-danger">Xóa</button>
+        <a asp-action="Index" class="btn btn-secondary">Hủy</a>
+    </form>
+</div>
+

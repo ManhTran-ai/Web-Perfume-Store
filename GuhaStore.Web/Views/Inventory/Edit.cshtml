@@ -1,0 +1,45 @@
+@model GuhaStore.Core.Entities.Inventory
+@{
+    ViewData["Title"] = "Sửa phiếu nhập kho";
+}
+
+<div class="container">
+    <h2 class="mb-3">Sửa phiếu nhập kho</h2>
+    <form asp-action="Edit" method="post" class="card card-body">
+        <input type="hidden" asp-for="InventoryId" />
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label">Mã phiếu</label>
+                <input asp-for="InventoryCode" class="form-control" readonly />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Nhà cung cấp</label>
+                <input asp-for="SupplierName" class="form-control" />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">SĐT nhà cung cấp</label>
+                <input asp-for="SupplierPhone" class="form-control" />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Nhân viên</label>
+                <input asp-for="StafName" class="form-control" />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Trạng thái</label>
+                <select asp-for="InventoryStatus" class="form-select">
+                    <option value="1">Đang xử lý</option>
+                    <option value="0">Hoàn tất</option>
+                </select>
+            </div>
+            <div class="col-12">
+                <label class="form-label">Ghi chú</label>
+                <input asp-for="InventoryNote" class="form-control" />
+            </div>
+        </div>
+        <div class="mt-3 d-flex gap-2">
+            <button class="btn btn-primary">Lưu</button>
+            <a asp-action="Index" class="btn btn-secondary">Hủy</a>
+        </div>
+    </form>
+</div>
+

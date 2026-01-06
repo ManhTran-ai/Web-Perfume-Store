@@ -1,0 +1,16 @@
+D:\GuhaStorePHP\GuhaStore.Application\bin\Debug\net8.0\GuhaStore.Application.deps.json
+D:\GuhaStorePHP\GuhaStore.Application\bin\Debug\net8.0\GuhaStore.Application.dll
+D:\GuhaStorePHP\GuhaStore.Application\bin\Debug\net8.0\GuhaStore.Application.pdb
+D:\GuhaStorePHP\GuhaStore.Application\bin\Debug\net8.0\GuhaStore.Core.dll
+D:\GuhaStorePHP\GuhaStore.Application\bin\Debug\net8.0\GuhaStore.Core.pdb
+D:\GuhaStorePHP\GuhaStore.Application\obj\Debug\net8.0\GuhaStore.Application.csproj.AssemblyReference.cache
+D:\GuhaStorePHP\GuhaStore.Application\obj\Debug\net8.0\GuhaStore.Application.GeneratedMSBuildEditorConfig.editorconfig
+D:\GuhaStorePHP\GuhaStore.Application\obj\Debug\net8.0\GuhaStore.Application.AssemblyInfoInputs.cache
+D:\GuhaStorePHP\GuhaStore.Application\obj\Debug\net8.0\GuhaStore.Application.AssemblyInfo.cs
+D:\GuhaStorePHP\GuhaStore.Application\obj\Debug\net8.0\GuhaStore.Application.csproj.CoreCompileInputs.cache
+D:\GuhaStorePHP\GuhaStore.Application\obj\Debug\net8.0\GuhaStore.Application.sourcelink.json
+D:\GuhaStorePHP\GuhaStore.Application\obj\Debug\net8.0\GuhaStor.94B9D015.Up2Date
+D:\GuhaStorePHP\GuhaStore.Application\obj\Debug\net8.0\GuhaStore.Application.dll
+D:\GuhaStorePHP\GuhaStore.Application\obj\Debug\net8.0\refint\GuhaStore.Application.dll
+D:\GuhaStorePHP\GuhaStore.Application\obj\Debug\net8.0\GuhaStore.Application.pdb
+D:\GuhaStorePHP\GuhaStore.Application\obj\Debug\net8.0\ref\GuhaStore.Application.dll

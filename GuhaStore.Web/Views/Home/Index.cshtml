@@ -1,0 +1,151 @@
+﻿@{
+    ViewData["Title"] = "GuhaStore";
+}
+
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="p-4 bg-light rounded-3 d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="fw-bold">Nước hoa chính hãng</h1>
+                    <p class="text-muted mb-3">Khám phá bộ sưu tập hương thơm dành cho bạn.</p>
+                    <a asp-controller="Products" asp-action="Index" class="btn btn-primary btn-lg">Mua ngay</a>
+                </div>
+                <i class="bi bi-bag-heart" style="font-size:64px;color:#0d6efd"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-3 col-6">
+            <div class="card h-100 text-center">
+                <div class="card-body">
+                    <i class="bi bi-truck fs-2 text-primary"></i>
+                    <h6 class="mt-2">Giao hàng nhanh</h6>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="card h-100 text-center">
+                <div class="card-body">
+                    <i class="bi bi-shield-check fs-2 text-primary"></i>
+                    <h6 class="mt-2">Hàng chính hãng</h6>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="card h-100 text-center">
+                <div class="card-body">
+                    <i class="bi bi-arrow-repeat fs-2 text-primary"></i>
+                    <h6 class="mt-2">Đổi trả 7 ngày</h6>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="card h-100 text-center">
+                <div class="card-body">
+                    <i class="bi bi-headset fs-2 text-primary"></i>
+                    <h6 class="mt-2">Hỗ trợ 24/7</h6>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (ViewBag.NewProducts != null)
+    {
+        <div class="mb-4">
+            <h3 class="mb-3">Sản phẩm mới</h3>
+            <div class="row g-3">
+                @foreach (var product in ViewBag.NewProducts as IEnumerable<GuhaStore.Core.Entities.Product> ?? Enumerable.Empty<GuhaStore.Core.Entities.Product>())
+                {
+                    <partial name="~/Views/Products/_ProductCard.cshtml" model="product" />
+                }
+            </div>
+        </div>
+    }
+
+    @if (ViewBag.BestSellers != null)
+    {
+        <div class="mb-4">
+            <h3 class="mb-3">Bán chạy</h3>
+            <div class="row g-3">
+                @foreach (var product in ViewBag.BestSellers as IEnumerable<GuhaStore.Core.Entities.Product> ?? Enumerable.Empty<GuhaStore.Core.Entities.Product>())
+                {
+                    <partial name="~/Views/Products/_ProductCard.cshtml" model="product" />
+                }
+            </div>
+        </div>
+    }
+
+    @if (ViewBag.SaleProducts != null)
+    {
+        <div class="mb-4">
+            <h3 class="mb-3">Đang giảm giá</h3>
+            <div class="row g-3">
+                @foreach (var product in ViewBag.SaleProducts as IEnumerable<GuhaStore.Core.Entities.Product> ?? Enumerable.Empty<GuhaStore.Core.Entities.Product>())
+                {
+                    <partial name="~/Views/Products/_ProductCard.cshtml" model="product" />
+                }
+            </div>
+        </div>
+    }
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header"><h5>Danh mục</h5></div>
+                <div class="card-body">
+                    <div class="row">
+                        @foreach (var category in (ViewBag.Categories as IEnumerable<GuhaStore.Core.Entities.Category> ?? Enumerable.Empty<GuhaStore.Core.Entities.Category>()))
+                        {
+                            <div class="col-6 mb-2">
+                                <a asp-controller="Products" asp-action="Index" asp-route-categoryId="@category.CategoryId" class="text-decoration-none">
+                                    @category.CategoryName
+                                </a>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header"><h5>Thương hiệu</h5></div>
+                <div class="card-body">
+                    <div class="row">
+                        @foreach (var brand in (ViewBag.Brands as IEnumerable<GuhaStore.Core.Entities.Brand> ?? Enumerable.Empty<GuhaStore.Core.Entities.Brand>()))
+                        {
+                            <div class="col-6 mb-2">
+                                <a asp-controller="Products" asp-action="Index" asp-route-brandId="@brand.BrandId" class="text-decoration-none">
+                                    @brand.BrandName
+                                </a>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (ViewBag.RecentArticles != null)
+    {
+        <div class="mb-4">
+            <h3 class="mb-3">Bài viết mới</h3>
+            <div class="row g-3">
+                @foreach (var article in (ViewBag.RecentArticles as IEnumerable<GuhaStore.Core.Entities.Article> ?? Enumerable.Empty<GuhaStore.Core.Entities.Article>()))
+                {
+                    <div class="col-md-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">@article.ArticleTitle</h5>
+                                <p class="text-muted small">@article.ArticleDate.ToString("dd/MM/yyyy")</p>
+                                <p class="card-text">@article.ArticleSummary</p>
+                                <a asp-controller="Blog" asp-action="Details" asp-route-id="@article.ArticleId" class="btn btn-outline-primary btn-sm">Đọc tiếp</a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>

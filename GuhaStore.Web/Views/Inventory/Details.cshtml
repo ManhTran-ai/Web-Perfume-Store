@@ -1,0 +1,38 @@
+@model GuhaStore.Core.Entities.Inventory
+@{
+    ViewData["Title"] = "Chi tiết phiếu nhập";
+}
+
+<div class="container">
+    <h2>Phiếu nhập @Model.InventoryCode</h2>
+    <p class="text-muted">Ngày: @Model.InventoryDate.ToString("dd/MM/yyyy HH:mm")</p>
+    <p>Nhân viên: @Model.StafName</p>
+    <p>Nhà cung cấp: @Model.SupplierName - @Model.SupplierPhone</p>
+    <p>Ghi chú: @Model.InventoryNote</p>
+
+    <h5 class="mt-4">Chi tiết</h5>
+    @if (ViewBag.InventoryDetails != null)
+    {
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Mã sản phẩm</th>
+                    <th>Số lượng</th>
+                    <th>Giá nhập</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var d in (ViewBag.InventoryDetails as IEnumerable<GuhaStore.Core.Entities.InventoryDetail> ?? Enumerable.Empty<GuhaStore.Core.Entities.InventoryDetail>()))
+                {
+                    <tr>
+                        <td>@d.ProductId</td>
+                        <td>@d.ProductQuantity</td>
+                        <td>@d.ProductPriceImport.ToString("N0")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+</div>
+

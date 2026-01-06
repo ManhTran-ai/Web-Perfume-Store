@@ -1,0 +1,67 @@
+@model IEnumerable<GuhaStore.Core.Entities.Order>
+@{
+    ViewData["Title"] = "Lịch sử đơn hàng";
+}
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="list-group">
+                <a asp-action="MyAccount" class="list-group-item list-group-item-action">Thông tin tài khoản</a>
+                <a asp-action="OrderHistory" class="list-group-item list-group-item-action active">Lịch sử đơn hàng</a>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Lịch sử đơn hàng</h4>
+                </div>
+                <div class="card-body">
+                    @if (Model != null && Model.Any())
+                    {
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Mã đơn hàng</th>
+                                    <th>Ngày đặt</th>
+                                    <th>Tổng tiền</th>
+                                    <th>Trạng thái</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var order in Model)
+                                {
+                                    <tr>
+                                        <td>#@order.OrderCode</td>
+                                        <td>@order.OrderDate</td>
+                                        <td>@order.TotalAmount.ToString("N0") VNĐ</td>
+                                        <td>
+                                            @switch (order.OrderStatus)
+                                            {
+                                                case 0: <span class="badge bg-warning">Chờ xử lý</span> break;
+                                                case 1: <span class="badge bg-info">Đang xử lý</span> break;
+                                                case 2: <span class="badge bg-primary">Đã giao hàng</span> break;
+                                                case 3: <span class="badge bg-success">Đã hoàn thành</span> break;
+                                                case 4: <span class="badge bg-danger">Đã hủy</span> break;
+                                                default: <span class="badge bg-secondary">Không xác định</span> break;
+                                            }
+                                        </td>
+                                        <td>
+                                            <a asp-action="OrderDetail" asp-route-orderId="@order.OrderId" class="btn btn-sm btn-primary">Chi tiết</a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <p class="text-center">Bạn chưa có đơn hàng nào.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

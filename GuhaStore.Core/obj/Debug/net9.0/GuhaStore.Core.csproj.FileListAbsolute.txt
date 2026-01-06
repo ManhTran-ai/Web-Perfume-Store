@@ -1,0 +1,12 @@
+D:\GuhaStorePHP\GuhaStore.Core\bin\Debug\net9.0\GuhaStore.Core.deps.json
+D:\GuhaStorePHP\GuhaStore.Core\bin\Debug\net9.0\GuhaStore.Core.dll
+D:\GuhaStorePHP\GuhaStore.Core\bin\Debug\net9.0\GuhaStore.Core.pdb
+D:\GuhaStorePHP\GuhaStore.Core\obj\Debug\net9.0\GuhaStore.Core.GeneratedMSBuildEditorConfig.editorconfig
+D:\GuhaStorePHP\GuhaStore.Core\obj\Debug\net9.0\GuhaStore.Core.AssemblyInfoInputs.cache
+D:\GuhaStorePHP\GuhaStore.Core\obj\Debug\net9.0\GuhaStore.Core.AssemblyInfo.cs
+D:\GuhaStorePHP\GuhaStore.Core\obj\Debug\net9.0\GuhaStore.Core.csproj.CoreCompileInputs.cache
+D:\GuhaStorePHP\GuhaStore.Core\obj\Debug\net9.0\GuhaStore.Core.sourcelink.json
+D:\GuhaStorePHP\GuhaStore.Core\obj\Debug\net9.0\GuhaStore.Core.dll
+D:\GuhaStorePHP\GuhaStore.Core\obj\Debug\net9.0\refint\GuhaStore.Core.dll
+D:\GuhaStorePHP\GuhaStore.Core\obj\Debug\net9.0\GuhaStore.Core.pdb
+D:\GuhaStorePHP\GuhaStore.Core\obj\Debug\net9.0\ref\GuhaStore.Core.dll

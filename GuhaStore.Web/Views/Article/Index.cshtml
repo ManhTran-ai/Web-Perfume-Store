@@ -1,0 +1,41 @@
+@model IEnumerable<GuhaStore.Core.Entities.Article>
+@{
+    ViewData["Title"] = "Quản lý bài viết";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Bài viết</h2>
+        <a asp-action="Create" class="btn btn-primary">Thêm bài viết</a>
+    </div>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Tiêu đề</th>
+                <th>Tác giả</th>
+                <th>Ngày</th>
+                <th>Trạng thái</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.ArticleTitle</td>
+                    <td>@item.ArticleAuthor</td>
+                    <td>@item.ArticleDate.ToString("dd/MM/yyyy")</td>
+                    <td>@(item.ArticleStatus == 1 ? "Hiển thị" : "Nháp")</td>
+                    <td class="text-end">
+                        <a asp-action="Details" asp-route-id="@item.ArticleId" class="btn btn-sm btn-outline-secondary">Xem</a>
+                        <a asp-action="Edit" asp-route-id="@item.ArticleId" class="btn btn-sm btn-outline-primary">Sửa</a>
+                        <a asp-action="Delete" asp-route-id="@item.ArticleId" class="btn btn-sm btn-outline-danger">Xóa</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+

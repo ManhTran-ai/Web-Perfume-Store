@@ -1,0 +1,44 @@
+@model IEnumerable<GuhaStore.Core.Entities.Inventory>
+@{
+    ViewData["Title"] = "Quản lý kho";
+}
+
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Phiếu nhập kho</h2>
+        <div class="d-flex gap-2">
+            <a asp-action="LowStock" class="btn btn-outline-warning">Hàng sắp hết</a>
+            <a asp-action="Create" class="btn btn-primary">Tạo phiếu</a>
+        </div>
+    </div>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Mã phiếu</th>
+                <th>Nhân viên</th>
+                <th>Nhà cung cấp</th>
+                <th>Ngày</th>
+                <th>Trạng thái</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.InventoryCode</td>
+                    <td>@item.StafName</td>
+                    <td>@item.SupplierName</td>
+                    <td>@item.InventoryDate.ToString("dd/MM/yyyy")</td>
+                    <td>@(item.InventoryStatus == 0 ? "Hoàn tất" : "Đang xử lý")</td>
+                    <td class="text-end">
+                        <a asp-action="Details" asp-route-id="@item.InventoryId" class="btn btn-sm btn-outline-secondary">Xem</a>
+                        <a asp-action="Edit" asp-route-id="@item.InventoryId" class="btn btn-sm btn-outline-primary">Sửa</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+

@@ -1,0 +1,142 @@
+@model IEnumerable<GuhaStore.Core.Entities.Product>
+@{
+    ViewData["Title"] = "Sản phẩm";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5>Bộ lọc</h5>
+                </div>
+                <div class="card-body">
+                    <form method="get" asp-action="Index">
+                        <input type="hidden" name="page" value="1" />
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Danh mục</label>
+                            <select name="categoryId" class="form-select" onchange="this.form.submit()">
+                                <option value="">Tất cả</option>
+                                @foreach (var category in (ViewBag.Categories as IEnumerable<GuhaStore.Core.Entities.Category> ?? Enumerable.Empty<GuhaStore.Core.Entities.Category>()))
+                                {
+                                    <option value="@category.CategoryId" selected="@(ViewBag.CategoryId == category.CategoryId)">@category.CategoryName</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Thương hiệu</label>
+                            <select name="brandId" class="form-select" onchange="this.form.submit()">
+                                <option value="">Tất cả</option>
+                                @foreach (var brand in (ViewBag.Brands as IEnumerable<GuhaStore.Core.Entities.Brand> ?? Enumerable.Empty<GuhaStore.Core.Entities.Brand>()))
+                                {
+                                    <option value="@brand.BrandId" selected="@(ViewBag.BrandId == brand.BrandId)">@brand.BrandName</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Sắp xếp</label>
+                            <select name="sortBy" class="form-select" onchange="this.form.submit()">
+                                <option value="newest" selected="@(ViewBag.SortBy == "newest")">Mới nhất</option>
+                                <option value="price-asc" selected="@(ViewBag.SortBy == "price-asc")">Giá tăng dần</option>
+                                <option value="price-desc" selected="@(ViewBag.SortBy == "price-desc")">Giá giảm dần</option>
+                                <option value="name" selected="@(ViewBag.SortBy == "name")">Tên A-Z</option>
+                                <option value="sales" selected="@(ViewBag.SortBy == "sales")">Bán chạy</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Khoảng giá (₫)</label>
+                            <div class="d-flex gap-2">
+                                <input type="number" class="form-control" name="minPrice" value="@ViewBag.MinPrice" placeholder="Từ" />
+                                <input type="number" class="form-control" name="maxPrice" value="@ViewBag.MaxPrice" placeholder="Đến" />
+                            </div>
+                        </div>
+
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" value="true" id="onSaleOnly" name="onSaleOnly" @(ViewBag.OnSaleOnly == true ? "checked" : "") />
+                            <label class="form-check-label" for="onSaleOnly">
+                                Chỉ hiển thị sản phẩm giảm giá
+                            </label>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">Lọc</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Sản phẩm</h2>
+                @if (!string.IsNullOrEmpty(ViewBag.SearchTerm as string))
+                {
+                    <div class="text-muted">Kết quả tìm kiếm: "@ViewBag.SearchTerm"</div>
+                }
+            </div>
+
+            @if (Model != null && Model.Any())
+            {
+                <div class="row">
+                    @foreach (var product in Model)
+                    {
+                        <div class="col-md-4 mb-4">
+                            <div class="card h-100">
+                                <a asp-action="Details" asp-route-id="@product.ProductId" class="text-decoration-none">
+                                    <img src="~/uploads/products/@product.ProductImage" class="card-img-top" alt="@product.ProductName" style="height: 250px; object-fit: cover;" />
+                                </a>
+                                <div class="card-body d-flex flex-column">
+                                    <h5 class="card-title">
+                                        <a asp-action="Details" asp-route-id="@product.ProductId" class="text-decoration-none text-dark">@product.ProductName</a>
+                                    </h5>
+                                    <div class="mt-auto">
+                                        @if (product.ProductSale > 0)
+                                        {
+                                            <div class="text-decoration-line-through text-muted small">@product.ProductPrice.ToString("N0") ₫</div>
+                                            <div class="text-danger fw-bold">@((product.ProductPrice - (product.ProductPrice * product.ProductSale / 100)).ToString("N0")) ₫</div>
+                                            <span class="badge bg-danger">-@product.ProductSale%</span>
+                                        }
+                                        else
+                                        {
+                                            <div class="fw-bold">@product.ProductPrice.ToString("N0") ₫</div>
+                                        }
+                                    </div>
+                                    <div class="mt-2">
+                                        <form asp-controller="Cart" asp-action="AddToCart" method="post" class="d-inline">
+                                            <input type="hidden" name="productId" value="@product.ProductId" />
+                                            <input type="hidden" name="quantity" value="1" />
+                                            <button type="submit" class="btn btn-primary btn-sm w-100">Thêm vào giỏ</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                @if (ViewBag.TotalPages > 1)
+                {
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination justify-content-center">
+                            @for (int i = 1; i <= ViewBag.TotalPages; i++)
+                            {
+                                <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                                    <a class="page-link" asp-action="Index" asp-route-page="@i" asp-route-categoryId="@ViewBag.CategoryId" asp-route-brandId="@ViewBag.BrandId" asp-route-searchTerm="@ViewBag.SearchTerm" asp-route-sortBy="@ViewBag.SortBy">@i</a>
+                                </li>
+                            }
+                        </ul>
+                    </nav>
+                }
+            }
+            else
+            {
+                <div class="text-center py-5">
+                    <p class="text-muted">Không tìm thấy sản phẩm nào.</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+

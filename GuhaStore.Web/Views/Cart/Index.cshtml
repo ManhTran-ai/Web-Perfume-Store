@@ -1,0 +1,92 @@
+@model Dictionary<string, object>
+@{
+    ViewData["Title"] = "Giỏ hàng";
+    var cartTotal = ViewBag.CartTotal as decimal? ?? 0;
+    var isValid = ViewBag.IsValid as bool? ?? true;
+}
+
+<div class="container mt-5">
+    <h2>Giỏ hàng của bạn</h2>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="row">
+            <div class="col-md-8">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Sản phẩm</th>
+                            <th>Giá</th>
+                            <th>Số lượng</th>
+                            <th>Tổng</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            var itemDict = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, object>>(
+                                System.Text.Json.JsonSerializer.Serialize(item.Value));
+                            if (itemDict != null)
+                            {
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <img src="@itemDict.GetValueOrDefault("ProductImage")" alt="@itemDict.GetValueOrDefault("ProductName")" 
+                                                 class="img-thumbnail me-3" style="width: 80px; height: 80px; object-fit: cover;" />
+                                            <div>
+                                                <strong>@itemDict.GetValueOrDefault("ProductName")</strong><br />
+                                                <small>Kích cỡ: @itemDict.GetValueOrDefault("CapacityName")</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>@Convert.ToDecimal(itemDict.GetValueOrDefault("SalePrice")).ToString("N0") VNĐ</td>
+                                    <td>
+                                        <form asp-action="UpdateQuantity" method="post" class="d-inline">
+                                            <input type="hidden" name="variantKey" value="@item.Key" />
+                                            <input type="number" name="quantity" value="@itemDict.GetValueOrDefault("Quantity")" 
+                                                   min="1" class="form-control form-control-sm d-inline-block" style="width: 80px;" />
+                                            <button type="submit" class="btn btn-sm btn-outline-primary">Cập nhật</button>
+                                        </form>
+                                    </td>
+                                    <td>@Convert.ToDecimal(itemDict.GetValueOrDefault("Total")).ToString("N0") VNĐ</td>
+                                    <td>
+                                        <form asp-action="RemoveItem" method="post" class="d-inline">
+                                            <input type="hidden" name="variantKey" value="@item.Key" />
+                                            <button type="submit" class="btn btn-sm btn-danger">Xóa</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Tóm tắt đơn hàng</h5>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Tổng cộng:</strong> <span class="text-danger fs-4">@cartTotal.ToString("N0") VNĐ</span></p>
+                        @if (!isValid)
+                        {
+                            <div class="alert alert-warning">
+                                Một số sản phẩm không còn đủ số lượng. Vui lòng kiểm tra lại.
+                            </div>
+                        }
+                        <a asp-action="Index" asp-controller="Checkout" class="btn btn-primary w-100">Thanh toán</a>
+                        <a asp-action="Index" asp-controller="Products" class="btn btn-outline-secondary w-100 mt-2">Tiếp tục mua sắm</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="text-center py-5">
+            <p class="fs-4">Giỏ hàng của bạn đang trống</p>
+            <a asp-action="Index" asp-controller="Products" class="btn btn-primary">Tiếp tục mua sắm</a>
+        </div>
+    }
+</div>

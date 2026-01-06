@@ -1,0 +1,73 @@
+@model GuhaStore.Core.Entities.Article
+@{
+    ViewData["Title"] = Model.ArticleTitle;
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8">
+            <h1 class="mb-2">@Model.ArticleTitle</h1>
+            <p class="text-muted">@Model.ArticleAuthor - @Model.ArticleDate.ToString("dd/MM/yyyy")</p>
+            <p class="lead">@Model.ArticleSummary</p>
+            <hr />
+            <div class="mb-4">@Html.Raw(Model.ArticleContent)</div>
+
+            <h5 class="mt-4">Bình luận</h5>
+            <div class="mb-3">
+                @{
+                    var comments = ViewBag.Comments as IEnumerable<GuhaStore.Core.Entities.Comment> ?? Enumerable.Empty<GuhaStore.Core.Entities.Comment>();
+                }
+                @if (comments.Any())
+                {
+                    @foreach (var comment in comments)
+                    {
+                        <div class="border rounded p-3 mb-2">
+                            <div class="d-flex justify-content-between">
+                                <strong>@comment.CommentName</strong>
+                                <small class="text-muted">@comment.CommentDate.ToString("dd/MM/yyyy HH:mm")</small>
+                            </div>
+                            <p class="mb-0">@comment.CommentContent</p>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p class="text-muted">Chưa có bình luận.</p>
+                }
+            </div>
+
+            <form asp-action="AddComment" method="post" class="card card-body mb-4">
+                <input type="hidden" name="articleId" value="@Model.ArticleId" />
+                <div class="mb-2">
+                    <label class="form-label">Tên</label>
+                    <input type="text" name="commentName" class="form-control" />
+                </div>
+                <div class="mb-2">
+                    <label class="form-label">Email</label>
+                    <input type="email" name="commentEmail" class="form-control" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Nội dung</label>
+                    <textarea name="commentContent" class="form-control" rows="3" required></textarea>
+                </div>
+                <button class="btn btn-primary">Gửi bình luận</button>
+            </form>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card mb-3">
+                <div class="card-header"><h6>Bài viết mới</h6></div>
+                <div class="list-group list-group-flush">
+                    @foreach (var recent in (ViewBag.RecentArticles as IEnumerable<GuhaStore.Core.Entities.Article> ?? Enumerable.Empty<GuhaStore.Core.Entities.Article>()))
+                    {
+                        <a asp-action="Details" asp-route-id="@recent.ArticleId" class="list-group-item list-group-item-action">
+                            <div class="fw-bold">@recent.ArticleTitle</div>
+                            <small class="text-muted">@recent.ArticleDate.ToString("dd/MM/yyyy")</small>
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
