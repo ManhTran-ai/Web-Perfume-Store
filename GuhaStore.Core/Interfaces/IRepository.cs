@@ -8,5 +8,10 @@ public interface IRepository<T> where T : class
     Task UpdateAsync(T entity);
     Task DeleteAsync(T entity);
     Task<bool> ExistsAsync(int id);
+
+    // Extended methods for admin functionality
+    Task<IEnumerable<T>> GetPagedAsync(int page, int pageSize, string? searchTerm = null, string? sortBy = null, bool ascending = true);
+    Task<int> GetTotalCountAsync(string? searchTerm = null);
+    Task UpdateStatusAsync(int id, int status);
 }
 

@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\GuhaStorePHP\\GuhaStore.Core\\GuhaStore.Core.csproj",
+      "projectUniqueName": "D:\\GuhaStore\\GuhaStore.Core\\GuhaStore.Core.csproj",
       "projectName": "GuhaStore.Core",
-      "projectPath": "D:\\GuhaStorePHP\\GuhaStore.Core\\GuhaStore.Core.csproj",
+      "projectPath": "D:\\GuhaStore\\GuhaStore.Core\\GuhaStore.Core.csproj",
       "packagesPath": "C:\\Users\\Manh Tran\\.nuget\\packages\\",
-      "outputPath": "D:\\GuhaStorePHP\\GuhaStore.Core\\obj\\",
+      "outputPath": "D:\\GuhaStore\\GuhaStore.Core\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Manh Tran\\AppData\\Roaming\\NuGet\\NuGet.Config"

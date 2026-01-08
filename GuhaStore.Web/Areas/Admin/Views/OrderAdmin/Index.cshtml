@@ -1,0 +1,237 @@
+@{
+    ViewData["Title"] = "Orders Management";
+    Layout = "_LayoutAdmin";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">Orders Management</h4>
+        </div>
+    </div>
+</div>
+
+<!-- Filters -->
+<div class="admin-card mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-6">
+                <input type="text" name="searchTerm" value="@ViewBag.SearchTerm" class="form-control" placeholder="Search by order code or customer..." id="search-input">
+            </div>
+            <div class="col-md-3">
+                <select name="status" class="form-control">
+                    <option value="-1">All Status</option>
+                    <option value="0" @(ViewBag.Status == 0 ? "selected" : "")>Pending</option>
+                    <option value="1" @(ViewBag.Status == 1 ? "selected" : "")>Processing</option>
+                    <option value="2" @(ViewBag.Status == 2 ? "selected" : "")>Shipped</option>
+                    <option value="3" @(ViewBag.Status == 3 ? "selected" : "")>Delivered</option>
+                    <option value="4" @(ViewBag.Status == 4 ? "selected" : "")>Cancelled</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-outline-primary">
+                        <i class="fas fa-filter"></i> Filter
+                    </button>
+                    <a href="~/Admin/OrderAdmin" class="btn btn-outline-secondary">
+                        <i class="fas fa-times"></i> Clear
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<!-- Orders Table -->
+<div class="admin-card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <span><i class="fas fa-shopping-cart me-2"></i>Orders (@ViewBag.TotalCount)</span>
+        <div class="d-flex align-items-center">
+            <span class="text-muted me-2">Page @ViewBag.CurrentPage of @ViewBag.TotalPages</span>
+        </div>
+    </div>
+    <div class="card-body">
+        @if (Model != null && Model.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Order Code</th>
+                            <th>Customer</th>
+                            <th>Total Amount</th>
+                            <th>Status</th>
+                            <th>Payment</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var order in Model)
+                        {
+                            <tr>
+                                <td><strong>@order.OrderCode</strong></td>
+                                <td>@order.Account?.AccountName</td>
+                                <td class="fw-bold">@order.TotalAmount.ToString("N0") VND</td>
+                                <td>
+                                    @switch (order.OrderStatus)
+                                    {
+                                        case 0:
+                                            <span class="status-badge status-pending">Pending</span>
+                                            break;
+                                        case 1:
+                                            <span class="status-badge status-processing">Processing</span>
+                                            break;
+                                        case 2:
+                                            <span class="status-badge status-processing">Shipped</span>
+                                            break;
+                                        case 3:
+                                            <span class="status-badge status-completed">Delivered</span>
+                                            break;
+                                        case 4:
+                                            <span class="status-badge status-cancelled">Cancelled</span>
+                                            break;
+                                        default:
+                                            <span class="status-badge">Unknown</span>
+                                            break;
+                                    }
+                                </td>
+                                <td>
+                                    @switch (order.OrderType)
+                                    {
+                                        case 0:
+                                            <span class="badge bg-info">COD</span>
+                                            break;
+                                        case 1:
+                                            <span class="badge bg-primary">Online</span>
+                                            break;
+                                        case 2:
+                                            <span class="badge bg-success">VNPay</span>
+                                            break;
+                                        case 3:
+                                            <span class="badge bg-warning">MoMo</span>
+                                            break;
+                                        default:
+                                            <span class="badge bg-secondary">Other</span>
+                                            break;
+                                    }
+                                </td>
+                                <td>@order.OrderDate</td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a href="~/Admin/OrderAdmin/Details/@order.OrderId" class="btn btn-sm btn-outline-info" title="View Details">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        @if (order.OrderStatus < 3) // Not delivered
+                                        {
+                                            <div class="dropdown">
+                                                <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                                    <i class="fas fa-edit"></i> Update
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    @if (order.OrderStatus < 1)
+                                                    {
+                                                        <li><a class="dropdown-item" href="#" onclick="updateStatus(@order.OrderId, 1)">Mark as Processing</a></li>
+                                                    }
+                                                    @if (order.OrderStatus < 2)
+                                                    {
+                                                        <li><a class="dropdown-item" href="#" onclick="updateStatus(@order.OrderId, 2)">Mark as Shipped</a></li>
+                                                    }
+                                                    @if (order.OrderStatus < 3)
+                                                    {
+                                                        <li><a class="dropdown-item" href="#" onclick="updateStatus(@order.OrderId, 3)">Mark as Delivered</a></li>
+                                                    }
+                                                    @if (order.OrderStatus < 4)
+                                                    {
+                                                        <li><a class="dropdown-item text-danger" href="#" onclick="updateStatus(@order.OrderId, 4)">Cancel Order</a></li>
+                                                    }
+                                                </ul>
+                                            </div>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            @if (ViewBag.TotalPages > 1)
+            {
+                <nav aria-label="Order pagination" class="mt-4">
+                    <ul class="pagination justify-content-center">
+                        @if (ViewBag.CurrentPage > 1)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" href="~/Admin/OrderAdmin?page=@(ViewBag.CurrentPage - 1)&pageSize=@ViewBag.PageSize&searchTerm=@ViewBag.SearchTerm&status=@ViewBag.Status">
+                                    <i class="fas fa-chevron-left"></i> Previous
+                                </a>
+                            </li>
+                        }
+
+                        @for (int i = Math.Max(1, ViewBag.CurrentPage - 2); i <= Math.Min(ViewBag.TotalPages, ViewBag.CurrentPage + 2); i++)
+                        {
+                            <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                                <a class="page-link" href="~/Admin/OrderAdmin?page=@i&pageSize=@ViewBag.PageSize&searchTerm=@ViewBag.SearchTerm&status=@ViewBag.Status">@i</a>
+                            </li>
+                        }
+
+                        @if (ViewBag.CurrentPage < ViewBag.TotalPages)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" href="~/Admin/OrderAdmin?page=@(ViewBag.CurrentPage + 1)&pageSize=@ViewBag.PageSize&searchTerm=@ViewBag.SearchTerm&status=@ViewBag.Status">
+                                    Next <i class="fas fa-chevron-right"></i>
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+            }
+        }
+        else
+        {
+            <div class="text-center py-5">
+                <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">No orders found</h5>
+                @if (!string.IsNullOrEmpty(ViewBag.SearchTerm) || ViewBag.Status != -1)
+                {
+                    <p class="text-muted">Try adjusting your filters.</p>
+                    <a href="~/Admin/OrderAdmin" class="btn btn-outline-primary">Clear Filters</a>
+                }
+                else
+                {
+                    <p class="text-muted">Orders will appear here when customers place them.</p>
+                }
+            </div>
+        }
+    </div>
+</div>
+
+@if (Model != null && Model.Any())
+{
+    <form id="statusForm" method="post" style="display: none;">
+        <input type="hidden" name="orderId" id="statusOrderId" />
+        <input type="hidden" name="newStatus" id="statusNewStatus" />
+    </form>
+}
+
+@section Scripts {
+    <script>
+        function updateStatus(orderId, newStatus) {
+            if (confirm('Are you sure you want to update this order status?')) {
+                $('#statusOrderId').val(orderId);
+                $('#statusNewStatus').val(newStatus);
+                $('#statusForm').attr('action', '/Admin/OrderAdmin/UpdateStatus').submit();
+            }
+        }
+    </script>
+}

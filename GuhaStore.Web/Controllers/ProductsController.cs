@@ -94,8 +94,12 @@ public class ProductsController : Controller
         ViewBag.Variants = variants.ToList();
 
         // Load reviews/evaluates
-        var evaluates = await _unitOfWork.Evaluates.GetAllAsync();
-        ViewBag.Evaluates = evaluates.Where(e => e.ProductId == id && e.EvaluateStatus == 1).OrderByDescending(e => e.EvaluateDate).ToList();
+        var evaluates = await _productService.GetProductReviewsAsync(id);
+        ViewBag.Evaluates = evaluates;
+
+        // Load rating summary
+        ViewBag.AverageRating = await _productService.GetAverageRatingAsync(id);
+        ViewBag.ReviewCount = await _productService.GetReviewCountAsync(id);
 
         return View(product);
     }
@@ -109,6 +113,55 @@ public class ProductsController : Controller
         }
 
         return RedirectToAction(nameof(Index), new { searchTerm = term });
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> AddReview(int productId, int rating, string content)
+    {
+        var accountId = HttpContext.Session.GetInt32("AccountId");
+        if (accountId == null)
+        {
+            return Json(new { success = false, message = "Please login first" });
+        }
+
+        if (rating < 1 || rating > 5)
+        {
+            return Json(new { success = false, message = "Invalid rating" });
+        }
+
+        if (string.IsNullOrWhiteSpace(content))
+        {
+            return Json(new { success = false, message = "Review content is required" });
+        }
+
+        try
+        {
+            var success = await _productService.AddProductReviewAsync(accountId.Value, productId, rating, content);
+            return Json(new { success = success, message = "Review submitted successfully and pending approval" });
+        }
+        catch (Exception ex)
+        {
+            return Json(new { success = false, message = ex.Message });
+        }
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> VariantInfo(int productId, int capacityId)
+    {
+        var variant = await _productService.GetProductVariantAsync(productId, capacityId);
+        if (variant == null)
+        {
+            return Json(new { success = false, message = "Variant not found" });
+        }
+
+        return Json(new
+        {
+            success = true,
+            variantId = variant.VariantId,
+            price = variant.VariantPrice ?? 0,
+            quantity = variant.VariantQuantity,
+            status = variant.VariantStatus
+        });
     }
 }
 

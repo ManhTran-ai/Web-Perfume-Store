@@ -1,0 +1,59 @@
+# Git
+.git
+.gitignore
+
+# Docker
+Dockerfile*
+docker-compose*
+.dockerignore
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build outputs
+**/bin/
+**/obj/
+**/out/
+
+# Test results
+**/TestResults/
+*.trx
+
+# Coverage reports
+**/coverage/
+*.coverage
+
+# Logs
+logs/
+*.log
+
+# Temp files
+*.tmp
+*.temp
+
+# Local development
+.env
+.env.local
+
+# Documentation
+README.md
+*.md
+docs/
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+azure-pipelines.yml
+
+# Database files (use docker-compose volumes instead)
+*.sql
+!dbperfume.sql
+!create_product_variants_table.sql

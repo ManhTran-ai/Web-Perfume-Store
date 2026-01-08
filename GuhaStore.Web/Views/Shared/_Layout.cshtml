@@ -21,10 +21,52 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Trang chủ</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Products" asp-action="Index">Sản phẩm</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Blog" asp-action="Index">Blog</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Contact" asp-action="Index">Liên hệ</a>
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-dark" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-user"></i>
+                                @if (Context.Session.GetString("AccountName") != null)
+                                {
+                                    <span>@Context.Session.GetString("AccountName")</span>
+                                }
+                                else
+                                {
+                                    <span>Tài khoản</span>
+                                }
+                            </a>
+                            <ul class="dropdown-menu">
+                                @if (Context.Session.GetString("AccountName") != null)
+                                {
+                                    <li><a class="dropdown-item" asp-controller="Account" asp-action="MyAccount">Tài khoản của tôi</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Account" asp-action="OrderHistory">Lịch sử đơn hàng</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Wishlist" asp-action="Index">Danh sách yêu thích</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" asp-controller="Account" asp-action="Logout">Đăng xuất</a></li>
+                                }
+                                else
+                                {
+                                    <li><a class="dropdown-item" asp-controller="Account" asp-action="Login">Đăng nhập</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Account" asp-action="Register">Đăng ký</a></li>
+                                }
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark position-relative" asp-controller="Cart" asp-action="Index">
+                                <i class="fas fa-shopping-cart"></i>
+                                <span class="badge bg-danger position-absolute top-0 start-100 translate-middle" id="cart-count">0</span>
+                            </a>
                         </li>
                     </ul>
                 </div>
@@ -45,6 +87,36 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/toast.js" asp-append-version="true"></script>
+
+    <!-- Global cart count updater -->
+    <script>
+        function updateCartCount() {
+            $.get('/Cart/GetCartCount')
+                .done(function(response) {
+                    $('#cart-count').text(response.count);
+                    if (response.count > 0) {
+                        $('#cart-count').show();
+                    } else {
+                        $('#cart-count').hide();
+                    }
+                })
+                .fail(function() {
+                    $('#cart-count').hide();
+                });
+        }
+
+        // Update cart count on page load and after cart operations
+        $(document).ready(function() {
+            updateCartCount();
+
+            // Update cart count after any form submission that might affect cart
+            $('form[action*="AddToCart"], form[action*="UpdateQuantity"], form[action*="RemoveItem"]').on('submit', function() {
+                setTimeout(updateCartCount, 500);
+            });
+        });
+    </script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

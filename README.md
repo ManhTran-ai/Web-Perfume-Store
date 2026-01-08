@@ -1,6 +1,44 @@
 # GuhaStore - E-Commerce Application
 
-Ứng dụng thương mại điện tử được xây dựng bằng ASP.NET Core MVC với MySQL database.
+A comprehensive e-commerce platform built with ASP.NET Core MVC, featuring Clean Architecture, MySQL database, and modern web technologies.
+
+## 🚀 Features
+
+### Customer Features
+- 🛍️ Product catalog with advanced filtering
+- 🛒 Shopping cart with session persistence
+- 💳 Multiple payment methods (COD, VNPay, MoMo)
+- 👤 User authentication and account management
+- 📝 Product reviews and ratings
+- ❤️ Wishlist functionality
+- 📧 Email notifications
+
+### Admin Features
+- 📊 Dashboard with sales analytics
+- 📦 Product management (CRUD)
+- 📋 Order management and status updates
+- 👥 Customer management
+- 🏷️ Category and brand management
+- 💬 Comment and review moderation
+- 📈 Inventory management
+
+### Technical Features
+- 🏗️ Clean Architecture (Core, Application, Infrastructure, Web)
+- 🔒 Session-based authentication with role management
+- 🗄️ Entity Framework Core with MySQL
+- 🐳 Docker containerization
+- 📱 Responsive Bootstrap UI
+- ⚡ Memory caching for performance
+- 🧪 Unit testing with xUnit
+- 🔍 Serilog logging
+- ❤️ Health checks
+
+## 📋 Requirements
+
+- .NET 9.0 SDK
+- MySQL Server 8.0+
+- Database `dbperfume` initialized
+- Docker & Docker Compose (for containerized deployment)
 
 ## Yêu cầu hệ thống
 
@@ -8,9 +46,28 @@
 - MySQL Server 8.0 trở lên
 - Database `dbperfume` đã được tạo và có dữ liệu
 
-## Cài đặt và chạy dự án
+## 🚀 Quick Start
 
-### Bước 1: Kiểm tra MySQL Database
+### Option 1: Docker Deployment (Recommended)
+
+```bash
+# Clone repository
+git clone https://github.com/yourusername/guhastore.git
+cd guhastore
+
+# Configure production settings
+cp GuhaStore.Web/appsettings.Production.json.example GuhaStore.Web/appsettings.Production.json
+# Edit appsettings.Production.json with your credentials
+
+# Build and run
+docker-compose up -d
+
+# Access at http://localhost:8080
+```
+
+### Option 2: Local Development
+
+#### Bước 1: Kiểm tra MySQL Database
 
 Đảm bảo MySQL server đang chạy và database `dbperfume` đã tồn tại:
 

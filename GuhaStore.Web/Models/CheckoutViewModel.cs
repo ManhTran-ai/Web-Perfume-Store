@@ -25,6 +25,10 @@ public class CheckoutViewModel
     [StringLength(200)]
     public string DeliveryNote { get; set; } = string.Empty;
 
+    [Required(ErrorMessage = "Vui lòng chọn phương thức thanh toán")]
+    [Display(Name = "Phương thức thanh toán")]
+    public string PaymentMethod { get; set; } = "cod";
+
     public Dictionary<string, object> CartItems { get; set; } = new();
     public decimal TotalAmount { get; set; }
 }

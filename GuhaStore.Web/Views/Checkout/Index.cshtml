@@ -38,8 +38,55 @@
                             <span asp-validation-for="DeliveryNote" class="text-danger"></span>
                         </div>
 
-                        <div class="alert alert-info">
-                            <strong>Phương thức thanh toán:</strong> Tiền mặt khi nhận hàng (COD)
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5>Phương thức thanh toán</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="payment-methods">
+                                    <div class="form-check mb-3">
+                                        <input class="form-check-input" type="radio" name="PaymentMethod" id="cod" value="cod" checked>
+                                        <label class="form-check-label" for="cod">
+                                            <div class="d-flex align-items-center">
+                                                <i class="fas fa-money-bill-wave fa-lg me-3 text-success"></i>
+                                                <div>
+                                                    <strong>Tiền mặt khi nhận hàng (COD)</strong>
+                                                    <br>
+                                                    <small class="text-muted">Thanh toán khi nhận hàng tại nhà</small>
+                                                </div>
+                                            </div>
+                                        </label>
+                                    </div>
+
+                                    <div class="form-check mb-3">
+                                        <input class="form-check-input" type="radio" name="PaymentMethod" id="vnpay" value="vnpay">
+                                        <label class="form-check-label" for="vnpay">
+                                            <div class="d-flex align-items-center">
+                                                <i class="fas fa-credit-card fa-lg me-3 text-primary"></i>
+                                                <div>
+                                                    <strong>VNPay</strong>
+                                                    <br>
+                                                    <small class="text-muted">Thanh toán qua VNPay (ATM, Visa, Mastercard, QR)</small>
+                                                </div>
+                                            </div>
+                                        </label>
+                                    </div>
+
+                                    <div class="form-check mb-3">
+                                        <input class="form-check-input" type="radio" name="PaymentMethod" id="momo" value="momo">
+                                        <label class="form-check-label" for="momo">
+                                            <div class="d-flex align-items-center">
+                                                <i class="fas fa-mobile-alt fa-lg me-3 text-pink"></i>
+                                                <div>
+                                                    <strong>MoMo</strong>
+                                                    <br>
+                                                    <small class="text-muted">Thanh toán qua ví điện tử MoMo</small>
+                                                </div>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <button type="submit" class="btn btn-primary btn-lg w-100">Đặt hàng</button>

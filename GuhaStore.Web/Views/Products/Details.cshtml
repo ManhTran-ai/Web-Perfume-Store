@@ -11,16 +11,18 @@
         <div class="col-md-6">
             <h1>@Model.ProductName</h1>
             <div class="mb-3">
-                @if (Model.ProductSale > 0)
-                {
-                    <div class="text-decoration-line-through text-muted">@Model.ProductPrice.ToString("N0") ₫</div>
-                    <div class="text-danger fw-bold fs-4">@((Model.ProductPrice - (Model.ProductPrice * Model.ProductSale / 100)).ToString("N0")) ₫</div>
-                    <span class="badge bg-danger">-@Model.ProductSale%</span>
-                }
-                else
-                {
-                    <div class="fw-bold fs-4">@Model.ProductPrice.ToString("N0") ₫</div>
-                }
+                <div id="final-price-display">
+                    @if (Model.ProductSale > 0)
+                    {
+                        <div class="text-decoration-line-through text-muted">@Model.ProductPrice.ToString("N0") ₫</div>
+                        <div class="text-danger fw-bold fs-4">@((Model.ProductPrice - (Model.ProductPrice * Model.ProductSale / 100)).ToString("N0")) ₫</div>
+                        <span class="badge bg-danger">-@Model.ProductSale%</span>
+                    }
+                    else
+                    {
+                        <div class="fw-bold fs-4">@Model.ProductPrice.ToString("N0") ₫</div>
+                    }
+                </div>
             </div>
 
             <div class="mb-3">
@@ -52,15 +54,20 @@
                 <input type="number" id="quantity" value="1" min="1" max="@Model.ProductQuantity" class="form-control" style="width: 100px;" />
             </div>
 
-            <form asp-controller="Cart" asp-action="AddToCart" method="post" id="addToCartForm">
-                <input type="hidden" name="productId" value="@Model.ProductId" />
-                <input type="hidden" name="quantity" id="hiddenQuantity" value="1" />
-                <input type="hidden" name="variantId" id="hiddenVariantId" />
-                <button type="submit" class="btn btn-primary btn-lg">Thêm vào giỏ hàng</button>
-            </form>
+            <div class="d-flex gap-2 mb-3">
+                <form asp-controller="Cart" asp-action="AddToCart" method="post" id="addToCartForm" class="flex-grow-1">
+                    <input type="hidden" name="productId" value="@Model.ProductId" />
+                    <input type="hidden" name="quantity" id="hiddenQuantity" value="1" />
+                    <input type="hidden" name="variantId" id="hiddenVariantId" />
+                    <button type="submit" id="addToCartBtn" class="btn btn-primary btn-lg w-100">Thêm vào giỏ hàng</button>
+                </form>
+                <button type="button" id="wishlistBtn" class="btn btn-outline-danger btn-lg" onclick="toggleWishlist(@Model.ProductId)">
+                    <i class="fas fa-heart" id="wishlistIcon"></i>
+                </button>
+            </div>
 
             <div class="mt-3">
-                <small class="text-muted">Còn lại: @Model.ProductQuantity sản phẩm</small>
+                <small class="text-muted" id="stock-display">Còn lại: @Model.ProductQuantity sản phẩm</small>
             </div>
         </div>
     </div>
@@ -68,29 +75,127 @@
     @{
         var evaluates = ViewBag.Evaluates as IEnumerable<GuhaStore.Core.Entities.Evaluate> ?? Enumerable.Empty<GuhaStore.Core.Entities.Evaluate>();
     }
-    @if (evaluates.Any())
-    {
-        <div class="row mt-5">
-            <div class="col-12">
-                <h3>Đánh giá sản phẩm</h3>
-                @foreach (var evaluate in evaluates)
-                {
-                    <div class="card mb-2">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between">
-                                <strong>@evaluate.AccountName</strong>
-                                <div>
-                                    @for (int i = 0; i < evaluate.EvaluateRate; i++)
-                                    {
-                                        <i class="bi bi-star-fill text-warning"></i>
-                                    }
-                                </div>
+    <!-- Product Reviews Section -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <h3>Đánh giá sản phẩm</h3>
+
+            <!-- Rating Summary -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-3 text-center">
+                            <div class="display-4 fw-bold text-warning" id="averageRating">
+                                @(ViewBag.AverageRating?.ToString("0.0") ?? "0.0")
                             </div>
-                            <p class="mb-0">@evaluate.EvaluateContent</p>
-                            <small class="text-muted">@evaluate.EvaluateDate</small>
+                            <div class="rating-stars mb-2">
+                                @for (int i = 1; i <= 5; i++)
+                                {
+                                    <i class="fas fa-star text-warning" id="star-@i"></i>
+                                }
+                            </div>
+                            <div class="text-muted">@(ViewBag.ReviewCount ?? 0) đánh giá</div>
+                        </div>
+                        <div class="col-md-9">
+                            @if (Context.Session.GetInt32("AccountId") != null)
+                            {
+                                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#reviewModal">
+                                    <i class="fas fa-star"></i> Viết đánh giá
+                                </button>
+                            }
+                            else
+                            {
+                                <p class="text-muted mb-0">
+                                    <a href="~/Account/Login" class="text-decoration-none">Đăng nhập</a> để viết đánh giá
+                                </p>
+                            }
                         </div>
                     </div>
-                }
+                </div>
+            </div>
+
+            <!-- Reviews List -->
+            @if (evaluates.Any())
+            {
+                <div class="reviews-list">
+                    @foreach (var evaluate in evaluates)
+                    {
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div>
+                                        <strong>@(string.IsNullOrEmpty(evaluate.AccountName) ? "Anonymous" : evaluate.AccountName)</strong>
+                                        <small class="text-muted ms-2">@evaluate.EvaluateDate</small>
+                                    </div>
+                                    <div class="rating-display">
+                                        @for (int i = 1; i <= 5; i++)
+                                        {
+                                            if (i <= evaluate.EvaluateRate)
+                                            {
+                                                <i class="fas fa-star text-warning"></i>
+                                            }
+                                            else
+                                            {
+                                                <i class="far fa-star text-muted"></i>
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                                <p class="mb-0">@evaluate.EvaluateContent</p>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-4">
+                    <i class="fas fa-comments fa-3x text-muted mb-3"></i>
+                    <p class="text-muted">Chưa có đánh giá nào cho sản phẩm này.</p>
+                    @if (Context.Session.GetInt32("AccountId") != null)
+                    {
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#reviewModal">
+                            <i class="fas fa-plus"></i> Thêm đánh giá đầu tiên
+                        </button>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Review Modal -->
+    @if (Context.Session.GetInt32("AccountId") != null)
+    {
+        <div class="modal fade" id="reviewModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Viết đánh giá</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <form id="reviewForm">
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label class="form-label">Đánh giá của bạn</label>
+                                <div class="rating-input">
+                                    @for (int i = 1; i <= 5; i++)
+                                    {
+                                        <i class="far fa-star rating-star" data-rating="@i"></i>
+                                    }
+                                </div>
+                                <input type="hidden" id="ratingValue" name="rating" value="5" />
+                            </div>
+                            <div class="mb-3">
+                                <label for="reviewContent" class="form-label">Nội dung đánh giá</label>
+                                <textarea class="form-control" id="reviewContent" name="content" rows="4" placeholder="Hãy chia sẻ trải nghiệm của bạn về sản phẩm này..." required></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                            <button type="submit" class="btn btn-primary">Gửi đánh giá</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     }
@@ -126,15 +231,175 @@
 
 @section Scripts {
     <script>
+        // Initialize wishlist status
+        $(document).ready(function() {
+            checkWishlistStatus(@Model.ProductId);
+        });
+
+        // Add to cart form handling
         document.getElementById('addToCartForm').addEventListener('submit', function(e) {
             var quantity = document.getElementById('quantity').value;
             document.getElementById('hiddenQuantity').value = quantity;
-            
+
             var variantSelect = document.getElementById('variantSelect');
             if (variantSelect) {
                 document.getElementById('hiddenVariantId').value = variantSelect.value || '';
             }
         });
+
+        // Variant selection with AJAX
+        $('#variantSelect').on('change', function() {
+            var selectedOption = $(this).find('option:selected');
+            var variantId = selectedOption.val();
+            var capacityId = variantId; // Assuming variant ID maps to capacity ID
+
+            if (variantId && variantId !== '') {
+                // Update form hidden field
+                $('#hiddenVariantId').val(variantId);
+
+                // Fetch variant info via AJAX
+                $.get('/Products/VariantInfo', { productId: @Model.ProductId, capacityId: capacityId })
+                    .done(function(response) {
+                        if (response.success) {
+                            // Update price display
+                            var basePrice = @Model.ProductPrice;
+                            var salePercent = @Model.ProductSale;
+                            var variantPrice = response.price > 0 ? response.price : basePrice;
+
+                            if (salePercent > 0) {
+                                var finalPrice = variantPrice * (1 - salePercent / 100);
+                                $('#final-price-display').html(
+                                    `<span class="text-decoration-line-through text-muted">${variantPrice.toLocaleString()} ₫</span> ` +
+                                    `<span class="text-danger fw-bold">${finalPrice.toLocaleString()} ₫</span>`
+                                );
+                            } else {
+                                $('#final-price-display').text(variantPrice.toLocaleString() + ' ₫');
+                            }
+
+                            // Update stock display
+                            $('#stock-display').text(`Còn lại: ${response.quantity} sản phẩm`);
+
+                            // Update quantity input max
+                            $('#quantity').attr('max', response.quantity);
+
+                            // Update availability
+                            if (response.quantity > 0) {
+                                $('#addToCartBtn').prop('disabled', false).text('Thêm vào giỏ hàng');
+                            } else {
+                                $('#addToCartBtn').prop('disabled', true).text('Hết hàng');
+                            }
+                        }
+                    })
+                    .fail(function() {
+                        showToast('Không thể tải thông tin sản phẩm', 'error');
+                    });
+            } else {
+                // Reset to base product info
+                var basePrice = @Model.ProductPrice;
+                var salePercent = @Model.ProductSale;
+
+                if (salePercent > 0) {
+                    var finalPrice = basePrice * (1 - salePercent / 100);
+                    $('#final-price-display').html(
+                        `<span class="text-decoration-line-through text-muted">${basePrice.toLocaleString()} ₫</span> ` +
+                        `<span class="text-danger fw-bold">${finalPrice.toLocaleString()} ₫</span>`
+                    );
+                } else {
+                    $('#final-price-display').text(basePrice.toLocaleString() + ' ₫');
+                }
+
+                $('#stock-display').text(`Còn lại: @Model.ProductQuantity sản phẩm`);
+                $('#quantity').attr('max', @Model.ProductQuantity);
+                $('#hiddenVariantId').val('');
+                $('#addToCartBtn').prop('disabled', false).text('Thêm vào giỏ hàng');
+            }
+        });
+
+        // Wishlist functionality
+        function toggleWishlist(productId) {
+            $.post('/Wishlist/Toggle', { productId: productId })
+                .done(function(response) {
+                    if (response.success) {
+                        updateWishlistIcon(response.action === 'added');
+                        showToast(response.action === 'added' ? 'Đã thêm vào danh sách yêu thích' : 'Đã xóa khỏi danh sách yêu thích', 'success');
+                    } else {
+                        if (response.message) {
+                            showToast(response.message, 'error');
+                        }
+                    }
+                })
+                .fail(function() {
+                    showToast('Có lỗi xảy ra. Vui lòng thử lại.', 'error');
+                });
+        }
+
+        function checkWishlistStatus(productId) {
+            $.get('/Wishlist/IsInWishlist', { productId: productId })
+                .done(function(response) {
+                    updateWishlistIcon(response.isInWishlist);
+                });
+        }
+
+        function updateWishlistIcon(isInWishlist) {
+            const icon = document.getElementById('wishlistIcon');
+            const btn = document.getElementById('wishlistBtn');
+
+            if (isInWishlist) {
+                icon.className = 'fas fa-heart text-danger';
+                btn.className = 'btn btn-danger btn-lg';
+            } else {
+                icon.className = 'far fa-heart';
+                btn.className = 'btn btn-outline-danger btn-lg';
+            }
+        }
+
+        // Rating stars interaction
+        $('.rating-star').on('click', function() {
+            const rating = $(this).data('rating');
+            $('#ratingValue').val(rating);
+
+            $('.rating-star').each(function(index) {
+                if (index < rating) {
+                    $(this).removeClass('far').addClass('fas text-warning');
+                } else {
+                    $(this).removeClass('fas text-warning').addClass('far');
+                }
+            });
+        });
+
+        // Review form submission
+        $('#reviewForm').on('submit', function(e) {
+            e.preventDefault();
+
+            const rating = $('#ratingValue').val();
+            const content = $('#reviewContent').val().trim();
+
+            if (!content) {
+                showToast('Vui lòng nhập nội dung đánh giá', 'error');
+                return;
+            }
+
+            $.post('/Products/AddReview', {
+                productId: @Model.ProductId,
+                rating: rating,
+                content: content
+            })
+            .done(function(response) {
+                if (response.success) {
+                    $('#reviewModal').modal('hide');
+                    $('#reviewContent').val('');
+                    showToast('Đánh giá của bạn đã được gửi và đang chờ duyệt', 'success');
+                    setTimeout(() => location.reload(), 2000);
+                } else {
+                    showToast(response.message || 'Có lỗi xảy ra', 'error');
+                }
+            })
+            .fail(function() {
+                showToast('Có lỗi xảy ra. Vui lòng thử lại.', 'error');
+            });
+        });
+
+        // Toast notification function
     </script>
 }
 

@@ -103,6 +103,21 @@ public class CheckoutController : Controller
             await _unitOfWork.Deliveries.AddAsync(delivery);
             await _unitOfWork.SaveChangesAsync();
 
+            // Determine order type based on payment method
+            int orderType;
+            switch (model.PaymentMethod?.ToLower())
+            {
+                case "vnpay":
+                    orderType = 2; // VNPay
+                    break;
+                case "momo":
+                    orderType = 3; // MoMo
+                    break;
+                default:
+                    orderType = 0; // COD
+                    break;
+            }
+
             // Create order
             var order = new Order
             {
@@ -111,7 +126,7 @@ public class CheckoutController : Controller
                 AccountId = accountId.Value,
                 DeliveryId = delivery.DeliveryId,
                 TotalAmount = (int)model.TotalAmount,
-                OrderType = 0, // COD
+                OrderType = orderType,
                 OrderStatus = 0 // Pending
             };
 
@@ -154,13 +169,20 @@ public class CheckoutController : Controller
             // Create order with details
             await _orderService.CreateOrderAsync(order, orderDetails);
 
-            // Clear cart
-            await _cartService.ClearCartAsync();
-
-            // Send confirmation email
-            await _emailService.SendOrderConfirmationAsync(order);
-
-            return RedirectToAction("OrderConfirmation", new { orderId = order.OrderId });
+            // Handle payment based on method
+            if (model.PaymentMethod?.ToLower() is "vnpay" or "momo")
+            {
+                // For online payments, redirect to payment page
+                // Don't clear cart yet - it will be cleared after successful payment
+                return RedirectToAction("Pay", "Payment", new { orderId = order.OrderId, provider = model.PaymentMethod });
+            }
+            else
+            {
+                // For COD, clear cart and send confirmation
+                await _cartService.ClearCartAsync();
+                await _emailService.SendOrderConfirmationAsync(order);
+                return RedirectToAction("OrderConfirmation", new { orderId = order.OrderId });
+            }
         }
         catch (Exception)
         {

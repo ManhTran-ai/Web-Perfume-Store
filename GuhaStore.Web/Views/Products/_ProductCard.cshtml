@@ -1,11 +1,20 @@
 @model GuhaStore.Core.Entities.Product
 <div class="col-md-3 col-sm-6">
-    <div class="card h-100">
-        <a asp-controller="Products" asp-action="Details" asp-route-id="@Model.ProductId" class="text-decoration-none">
-            <img src="~/uploads/products/@Model.ProductImage" class="card-img-top" alt="@Model.ProductName" style="height: 200px; object-fit: cover;" />
-        </a>
+    <div class="card h-100 product-card">
+        <div class="position-relative">
+            <a asp-controller="Products" asp-action="Details" asp-route-id="@Model.ProductId" class="text-decoration-none">
+                <img src="~/uploads/products/@Model.ProductImage" class="card-img-top" alt="@Model.ProductName" style="height: 200px; object-fit: cover;" />
+            </a>
+            <button type="button" class="btn btn-sm btn-outline-danger position-absolute top-0 end-0 m-2 wishlist-btn" onclick="toggleWishlistFromCard(@Model.ProductId, this)">
+                <i class="far fa-heart"></i>
+            </button>
+        </div>
         <div class="card-body d-flex flex-column">
-            <h6 class="card-title">@Model.ProductName</h6>
+            <h6 class="card-title">
+                <a asp-controller="Products" asp-action="Details" asp-route-id="@Model.ProductId" class="text-decoration-none text-dark">
+                    @Model.ProductName
+                </a>
+            </h6>
             <div class="mt-auto">
                 @if (Model.ProductSale > 0)
                 {
@@ -20,10 +29,68 @@
             </div>
             <form asp-controller="Cart" asp-action="AddToCart" method="post" class="mt-2">
                 <input type="hidden" name="productId" value="@Model.ProductId" />
+                <input type="hidden" name="capacityId" value="@Model.CapacityId" />
                 <input type="hidden" name="quantity" value="1" />
                 <button type="submit" class="btn btn-primary btn-sm w-100">Thêm vào giỏ</button>
             </form>
         </div>
     </div>
 </div>
+
+<script>
+    function toggleWishlistFromCard(productId, buttonElement) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        $.post('/Wishlist/Toggle', { productId: productId })
+            .done(function(response) {
+                if (response.success) {
+                    const icon = $(buttonElement).find('i');
+                    const btn = $(buttonElement);
+
+                    if (response.action === 'added') {
+                        icon.removeClass('far').addClass('fas text-danger');
+                        btn.removeClass('btn-outline-danger').addClass('btn-danger');
+                    } else {
+                        icon.removeClass('fas text-danger').addClass('far');
+                        btn.removeClass('btn-danger').addClass('btn-outline-danger');
+                    }
+
+                    // Simple feedback
+                    const message = response.action === 'added' ? 'Added to wishlist' : 'Removed from wishlist';
+                    if (typeof showToast !== 'undefined') {
+                        showToast(message, 'success');
+                    } else {
+                        alert(message);
+                    }
+                }
+            })
+            .fail(function() {
+                alert('Error updating wishlist');
+            });
+    }
+
+    // Initialize wishlist status for cards (could be optimized with batch loading)
+    $(document).ready(function() {
+        $('.wishlist-btn').each(function() {
+            const productId = $(this).attr('onclick')?.match(/\d+/);
+            if (productId) {
+                checkWishlistStatusForCard(productId[0], this);
+            }
+        });
+    });
+
+    function checkWishlistStatusForCard(productId, buttonElement) {
+        $.get('/Wishlist/IsInWishlist', { productId: productId })
+            .done(function(response) {
+                const icon = $(buttonElement).find('i');
+                const btn = $(buttonElement);
+
+                if (response.isInWishlist) {
+                    icon.removeClass('far').addClass('fas text-danger');
+                    btn.removeClass('btn-outline-danger').addClass('btn-danger');
+                }
+            });
+    }
+</script>
 

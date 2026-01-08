@@ -10,3 +10,15 @@ D:\GuhaStorePHP\GuhaStore.Core\obj\Debug\net9.0\GuhaStore.Core.dll
 D:\GuhaStorePHP\GuhaStore.Core\obj\Debug\net9.0\refint\GuhaStore.Core.dll
 D:\GuhaStorePHP\GuhaStore.Core\obj\Debug\net9.0\GuhaStore.Core.pdb
 D:\GuhaStorePHP\GuhaStore.Core\obj\Debug\net9.0\ref\GuhaStore.Core.dll
+D:\GuhaStore\GuhaStore.Core\bin\Debug\net9.0\GuhaStore.Core.deps.json
+D:\GuhaStore\GuhaStore.Core\bin\Debug\net9.0\GuhaStore.Core.dll
+D:\GuhaStore\GuhaStore.Core\bin\Debug\net9.0\GuhaStore.Core.pdb
+D:\GuhaStore\GuhaStore.Core\obj\Debug\net9.0\GuhaStore.Core.GeneratedMSBuildEditorConfig.editorconfig
+D:\GuhaStore\GuhaStore.Core\obj\Debug\net9.0\GuhaStore.Core.AssemblyInfoInputs.cache
+D:\GuhaStore\GuhaStore.Core\obj\Debug\net9.0\GuhaStore.Core.AssemblyInfo.cs
+D:\GuhaStore\GuhaStore.Core\obj\Debug\net9.0\GuhaStore.Core.csproj.CoreCompileInputs.cache
+D:\GuhaStore\GuhaStore.Core\obj\Debug\net9.0\GuhaStore.Core.sourcelink.json
+D:\GuhaStore\GuhaStore.Core\obj\Debug\net9.0\GuhaStore.Core.dll
+D:\GuhaStore\GuhaStore.Core\obj\Debug\net9.0\refint\GuhaStore.Core.dll
+D:\GuhaStore\GuhaStore.Core\obj\Debug\net9.0\GuhaStore.Core.pdb
+D:\GuhaStore\GuhaStore.Core\obj\Debug\net9.0\ref\GuhaStore.Core.dll

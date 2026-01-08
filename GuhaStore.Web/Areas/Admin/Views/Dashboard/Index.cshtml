@@ -1,0 +1,207 @@
+@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "_LayoutAdmin";
+}
+
+<div class="row">
+    <!-- Sales Metrics -->
+    <div class="col-md-3 mb-4">
+        <div class="stats-card">
+            <div class="stats-number">@ViewBag.SalesMetrics.TotalRevenue.ToString("N0") VND</div>
+            <div class="stats-label">Total Revenue (This Month)</div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-4">
+        <div class="stats-card">
+            <div class="stats-number">@ViewBag.SalesMetrics.TotalOrders</div>
+            <div class="stats-label">Total Orders (This Month)</div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-4">
+        <div class="stats-card success">
+            <div class="stats-number">@ViewBag.SalesMetrics.TotalItemsSold</div>
+            <div class="stats-label">Items Sold (This Month)</div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-4">
+        <div class="stats-card warning">
+            <div class="stats-number">@ViewBag.SalesMetrics.AverageOrderValue.ToString("N0") VND</div>
+            <div class="stats-label">Avg Order Value</div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Order Statistics -->
+    <div class="col-md-6">
+        <div class="admin-card">
+            <div class="card-header">
+                <i class="fas fa-chart-pie me-2"></i>Order Statistics (This Month)
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-3">
+                        <div class="stats-number text-warning">@ViewBag.OrderStatistics.PendingOrders</div>
+                        <div class="stats-label">Pending</div>
+                    </div>
+                    <div class="col-3">
+                        <div class="stats-number text-primary">@ViewBag.OrderStatistics.ProcessingOrders</div>
+                        <div class="stats-label">Processing</div>
+                    </div>
+                    <div class="col-3">
+                        <div class="stats-number text-info">@ViewBag.OrderStatistics.ShippedOrders</div>
+                        <div class="stats-label">Shipped</div>
+                    </div>
+                    <div class="col-3">
+                        <div class="stats-number text-success">@ViewBag.OrderStatistics.DeliveredOrders</div>
+                        <div class="stats-label">Delivered</div>
+                    </div>
+                </div>
+                @if (ViewBag.OrderStatistics.CancelledOrders > 0)
+                {
+                    <div class="text-center mt-3">
+                        <span class="badge bg-danger">@ViewBag.OrderStatistics.CancelledOrders Cancelled</span>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Products -->
+    <div class="col-md-6">
+        <div class="admin-card">
+            <div class="card-header">
+                <i class="fas fa-star me-2"></i>Top Selling Products
+            </div>
+            <div class="card-body">
+                @if (ViewBag.TopProducts != null && ViewBag.TopProducts.Count > 0)
+                {
+                    <div class="list-group list-group-flush">
+                        @foreach (var product in ViewBag.TopProducts)
+                        {
+                            <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                <div>
+                                    <strong>@product.ProductName</strong>
+                                    <br>
+                                    <small class="text-muted">@product.QuantitySold items sold</small>
+                                </div>
+                                <span class="badge bg-primary rounded-pill">@product.Revenue.ToString("N0") VND</span>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted mb-0">No sales data available for this month.</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Orders -->
+<div class="admin-card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <span><i class="fas fa-shopping-cart me-2"></i>Recent Orders</span>
+        <a href="~/Admin/OrderAdmin" class="btn btn-sm btn-primary">View All</a>
+    </div>
+    <div class="card-body">
+        @if (ViewBag.RecentOrders != null && ViewBag.RecentOrders.Count > 0)
+        {
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Order Code</th>
+                            <th>Customer</th>
+                            <th>Total Amount</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var order in ViewBag.RecentOrders)
+                        {
+                            <tr>
+                                <td><strong>@order.OrderCode</strong></td>
+                                <td>@order.Account?.AccountName</td>
+                                <td>@order.TotalAmount.ToString("N0") VND</td>
+                                <td>
+                                    @switch (order.OrderStatus)
+                                    {
+                                        case 0:
+                                            <span class="status-badge status-pending">Pending</span>
+                                            break;
+                                        case 1:
+                                            <span class="status-badge status-processing">Processing</span>
+                                            break;
+                                        case 2:
+                                            <span class="status-badge status-processing">Shipped</span>
+                                            break;
+                                        case 3:
+                                            <span class="status-badge status-completed">Delivered</span>
+                                            break;
+                                        case 4:
+                                            <span class="status-badge status-cancelled">Cancelled</span>
+                                            break;
+                                        default:
+                                            <span class="status-badge">Unknown</span>
+                                            break;
+                                    }
+                                </td>
+                                <td>@order.OrderDate</td>
+                                <td>
+                                    <a href="~/Admin/OrderAdmin/Details/@order.OrderId" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="text-center py-4">
+                <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
+                <p class="text-muted">No orders found.</p>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="admin-card">
+    <div class="card-header">
+        <i class="fas fa-bolt me-2"></i>Quick Actions
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-3 mb-3">
+                <a href="~/Admin/ProductAdmin/Create" class="btn btn-success btn-lg w-100">
+                    <i class="fas fa-plus-circle me-2"></i>Add Product
+                </a>
+            </div>
+            <div class="col-md-3 mb-3">
+                <a href="~/Admin/OrderAdmin" class="btn btn-primary btn-lg w-100">
+                    <i class="fas fa-shopping-cart me-2"></i>Manage Orders
+                </a>
+            </div>
+            <div class="col-md-3 mb-3">
+                <a href="~/Admin/Article/Create" class="btn btn-info btn-lg w-100">
+                    <i class="fas fa-newspaper me-2"></i>Add Article
+                </a>
+            </div>
+            <div class="col-md-3 mb-3">
+                <a href="~/Admin/Inventory/Create" class="btn btn-warning btn-lg w-100">
+                    <i class="fas fa-warehouse me-2"></i>Add Inventory
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

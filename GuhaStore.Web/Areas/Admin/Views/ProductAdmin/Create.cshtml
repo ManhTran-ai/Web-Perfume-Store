@@ -1,0 +1,177 @@
+@model GuhaStore.Core.Entities.Product
+
+@{
+    ViewData["Title"] = "Create Product";
+    Layout = "_LayoutAdmin";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">Create New Product</h4>
+            <a href="~/Admin/ProductAdmin" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left"></i> Back to List
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="admin-card">
+    <div class="card-header">
+        <i class="fas fa-plus-circle me-2"></i>Product Information
+    </div>
+    <div class="card-body">
+        <form method="post" enctype="multipart/form-data">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="ProductName" class="form-label">Product Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="ProductName" name="ProductName" required maxlength="100">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="ProductCategory" class="form-label">Category <span class="text-danger">*</span></label>
+                            <select class="form-control" id="ProductCategory" name="ProductCategory" required>
+                                <option value="">Select Category</option>
+                                @foreach (var category in ViewBag.Categories)
+                                {
+                                    <option value="@category.Value">@category.Text</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="ProductBrand" class="form-label">Brand <span class="text-danger">*</span></label>
+                            <select class="form-control" id="ProductBrand" name="ProductBrand" required>
+                                <option value="">Select Brand</option>
+                                @foreach (var brand in ViewBag.Brands)
+                                {
+                                    <option value="@brand.Value">@brand.Text</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="CapacityId" class="form-label">Capacity <span class="text-danger">*</span></label>
+                            <select class="form-control" id="CapacityId" name="CapacityId" required>
+                                <option value="">Select Capacity</option>
+                                @foreach (var capacity in ViewBag.Capacities)
+                                {
+                                    <option value="@capacity.Value">@capacity.Text</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="ProductPrice" class="form-label">Price (VND) <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" id="ProductPrice" name="ProductPrice" required min="0">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="ProductPriceImport" class="form-label">Import Price (VND) <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" id="ProductPriceImport" name="ProductPriceImport" required min="0">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="ProductSale" class="form-label">Sale Percentage (%)</label>
+                            <input type="number" class="form-control" id="ProductSale" name="ProductSale" min="0" max="100" value="0">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="ProductQuantity" class="form-label">Stock Quantity <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" id="ProductQuantity" name="ProductQuantity" required min="0">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="ProductStatus" class="form-label">Status <span class="text-danger">*</span></label>
+                            <select class="form-control" id="ProductStatus" name="ProductStatus" required>
+                                <option value="1">Active</option>
+                                <option value="0">Inactive</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="ProductDescription" class="form-label">Description <span class="text-danger">*</span></label>
+                        <textarea class="form-control" id="ProductDescription" name="ProductDescription" rows="4" required maxlength="1000"></textarea>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label for="ProductImage" class="form-label">Product Image</label>
+                        <input type="file" class="form-control image-input" id="ProductImage" name="imageFile" accept="image/*">
+                        <small class="form-text text-muted">Supported formats: JPG, PNG, GIF, WebP (Max 5MB)</small>
+                        <div id="image-preview-container" class="mt-2" style="display: none;">
+                            <img id="image-preview" src="" alt="Preview" class="img-fluid border rounded" style="max-width: 200px;">
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <strong>Product Summary</strong>
+                        </div>
+                        <div class="card-body">
+                            <p class="mb-1"><strong>Final Price:</strong> <span id="final-price">0 VND</span></p>
+                            <p class="mb-1"><strong>Savings:</strong> <span id="savings">0 VND</span></p>
+                            <p class="mb-0"><strong>Margin:</strong> <span id="margin">0%</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Create Product
+                    </button>
+                    <a href="~/Admin/ProductAdmin" class="btn btn-outline-secondary ms-2">
+                        <i class="fas fa-times"></i> Cancel
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Calculate final price and margin
+            function calculatePricing() {
+                var price = parseFloat($('#ProductPrice').val()) || 0;
+                var importPrice = parseFloat($('#ProductPriceImport').val()) || 0;
+                var salePercent = parseFloat($('#ProductSale').val()) || 0;
+
+                var finalPrice = price * (1 - salePercent / 100);
+                var savings = price - finalPrice;
+                var margin = importPrice > 0 ? ((price - importPrice) / importPrice * 100) : 0;
+
+                $('#final-price').text(finalPrice.toLocaleString() + ' VND');
+                $('#savings').text(savings.toLocaleString() + ' VND');
+                $('#margin').text(margin.toFixed(1) + '%');
+            }
+
+            // Bind calculation to input changes
+            $('#ProductPrice, #ProductPriceImport, #ProductSale').on('input', calculatePricing);
+
+            // Image preview
+            $('.image-input').on('change', function() {
+                var file = this.files[0];
+                if (file) {
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        $('#image-preview').attr('src', e.target.result);
+                        $('#image-preview-container').show();
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // Initial calculation
+            calculatePricing();
+        });
+    </script>
+}

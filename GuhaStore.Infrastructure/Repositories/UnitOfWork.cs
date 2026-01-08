@@ -28,6 +28,8 @@ public class UnitOfWork : IUnitOfWork
     private IRepository<Inventory>? _inventories;
     private IRepository<InventoryDetail>? _inventoryDetails;
     private IRepository<Metric>? _metrics;
+    private IRepository<PaymentTransaction>? _paymentTransactions;
+    private IRepository<Wishlist>? _wishlists;
 
     public UnitOfWork(ApplicationDbContext context)
     {
@@ -51,6 +53,8 @@ public class UnitOfWork : IUnitOfWork
     public IRepository<Inventory> Inventories => _inventories ??= new Repository<Inventory>(_context);
     public IRepository<InventoryDetail> InventoryDetails => _inventoryDetails ??= new Repository<InventoryDetail>(_context);
     public IRepository<Metric> Metrics => _metrics ??= new Repository<Metric>(_context);
+    public IRepository<PaymentTransaction> PaymentTransactions => _paymentTransactions ??= new Repository<PaymentTransaction>(_context);
+    public IRepository<Wishlist> Wishlists => _wishlists ??= new Repository<Wishlist>(_context);
 
     public async Task<int> SaveChangesAsync()
     {

@@ -40,9 +40,9 @@ public class FileUploadService : IFileUploadService
 
         var safeFileName = $"product_{DateTime.Now:yyyyMMddHHmmss}_{Path.GetFileName(fileName)}";
         var uploadPath = Path.Combine(_webRootPath, "uploads", "products");
-        
+
         Directory.CreateDirectory(uploadPath);
-        
+
         var filePath = Path.Combine(uploadPath, safeFileName);
         using (var outputStream = new FileStream(filePath, FileMode.Create))
         {
@@ -51,6 +51,26 @@ public class FileUploadService : IFileUploadService
         }
 
         return $"/uploads/products/{safeFileName}";
+    }
+
+    public async Task<string> UploadCategoryImageAsync(Stream fileStream, string fileName)
+    {
+        if (!await ValidateImageFileAsync(fileStream, fileName, fileStream.Length))
+            throw new ArgumentException("Invalid image file");
+
+        var safeFileName = $"category_{DateTime.Now:yyyyMMddHHmmss}_{Path.GetFileName(fileName)}";
+        var uploadPath = Path.Combine(_webRootPath, "uploads", "categories");
+
+        Directory.CreateDirectory(uploadPath);
+
+        var filePath = Path.Combine(uploadPath, safeFileName);
+        using (var outputStream = new FileStream(filePath, FileMode.Create))
+        {
+            fileStream.Position = 0;
+            await fileStream.CopyToAsync(outputStream);
+        }
+
+        return $"/uploads/categories/{safeFileName}";
     }
 
     public async Task DeleteFileAsync(string filePath)

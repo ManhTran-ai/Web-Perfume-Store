@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "4vvoFbJsdLw=",
+  "dgSpecHash": "EBMD83j6nrk=",
   "success": true,
-  "projectFilePath": "D:\\GuhaStorePHP\\GuhaStore.Application\\GuhaStore.Application.csproj",
+  "projectFilePath": "D:\\GuhaStore\\GuhaStore.Application\\GuhaStore.Application.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Manh Tran\\.nuget\\packages\\bouncycastle.cryptography\\2.4.0\\bouncycastle.cryptography.2.4.0.nupkg.sha512",
     "C:\\Users\\Manh Tran\\.nuget\\packages\\google.protobuf\\3.26.1\\google.protobuf.3.26.1.nupkg.sha512",

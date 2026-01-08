@@ -4,12 +4,14 @@ public class Order
 {
     public int OrderId { get; set; }
     public int OrderCode { get; set; }
-    public string OrderDate { get; set; } = string.Empty;
     public int AccountId { get; set; }
-    public int DeliveryId { get; set; }
+    public DateTime OrderDate { get; set; }
     public int TotalAmount { get; set; }
-    public int OrderType { get; set; } // 0=COD, 1=Online, 2=VNPay, 3=MoMo, 4=Other, 5=Direct
-    public int OrderStatus { get; set; } // 0=Pending, 1=Processing, 2=Shipped, 3=Delivered, 4=Cancelled, -1=Failed
+    public int OrderStatus { get; set; } // 0=Pending, 1=Processing, 2=Shipped, 3=Delivered, 4=Cancelled
+    // Delivery info embedded to simplify schema
+    public string? DeliveryName { get; set; }
+    public string? DeliveryPhone { get; set; }
+    public string? DeliveryAddress { get; set; }
     
     // Navigation properties
     public Account? Account { get; set; }

@@ -11,58 +11,108 @@
                     <h5>Bộ lọc</h5>
                 </div>
                 <div class="card-body">
-                    <form method="get" asp-action="Index">
+                    <!-- Search Box -->
+                    <div class="mb-4">
+                        <form method="get" asp-action="Search" class="d-flex">
+                            <input type="text" name="term" class="form-control" placeholder="Tìm kiếm sản phẩm..." value="@ViewBag.SearchTerm" />
+                            <button type="submit" class="btn btn-outline-primary ms-2">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </form>
+                    </div>
+
+                    <form method="get" asp-action="Index" id="filterForm">
                         <input type="hidden" name="page" value="1" />
-                        
+                        <input type="hidden" name="searchTerm" value="@ViewBag.SearchTerm" />
+
+                        <!-- Categories -->
                         <div class="mb-3">
-                            <label class="form-label">Danh mục</label>
-                            <select name="categoryId" class="form-select" onchange="this.form.submit()">
-                                <option value="">Tất cả</option>
+                            <label class="form-label fw-bold">Danh mục</label>
+                            <div class="category-filters">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="categoryId" value="" id="cat-all"
+                                           @(ViewBag.CategoryId == null ? "checked" : "") onchange="submitFilters()">
+                                    <label class="form-check-label" for="cat-all">Tất cả</label>
+                                </div>
                                 @foreach (var category in (ViewBag.Categories as IEnumerable<GuhaStore.Core.Entities.Category> ?? Enumerable.Empty<GuhaStore.Core.Entities.Category>()))
                                 {
-                                    <option value="@category.CategoryId" selected="@(ViewBag.CategoryId == category.CategoryId)">@category.CategoryName</option>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="categoryId" value="@category.CategoryId" id="cat-@category.CategoryId"
+                                               @(ViewBag.CategoryId == category.CategoryId ? "checked" : "") onchange="submitFilters()">
+                                        <label class="form-check-label" for="cat-@category.CategoryId">@category.CategoryName</label>
+                                    </div>
                                 }
-                            </select>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Thương hiệu</label>
-                            <select name="brandId" class="form-select" onchange="this.form.submit()">
-                                <option value="">Tất cả</option>
-                                @foreach (var brand in (ViewBag.Brands as IEnumerable<GuhaStore.Core.Entities.Brand> ?? Enumerable.Empty<GuhaStore.Core.Entities.Brand>()))
-                                {
-                                    <option value="@brand.BrandId" selected="@(ViewBag.BrandId == brand.BrandId)">@brand.BrandName</option>
-                                }
-                            </select>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Sắp xếp</label>
-                            <select name="sortBy" class="form-select" onchange="this.form.submit()">
-                                <option value="newest" selected="@(ViewBag.SortBy == "newest")">Mới nhất</option>
-                                <option value="price-asc" selected="@(ViewBag.SortBy == "price-asc")">Giá tăng dần</option>
-                                <option value="price-desc" selected="@(ViewBag.SortBy == "price-desc")">Giá giảm dần</option>
-                                <option value="name" selected="@(ViewBag.SortBy == "name")">Tên A-Z</option>
-                                <option value="sales" selected="@(ViewBag.SortBy == "sales")">Bán chạy</option>
-                            </select>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Khoảng giá (₫)</label>
-                            <div class="d-flex gap-2">
-                                <input type="number" class="form-control" name="minPrice" value="@ViewBag.MinPrice" placeholder="Từ" />
-                                <input type="number" class="form-control" name="maxPrice" value="@ViewBag.MaxPrice" placeholder="Đến" />
                             </div>
                         </div>
 
-                        <div class="form-check mb-3">
-                            <input class="form-check-input" type="checkbox" value="true" id="onSaleOnly" name="onSaleOnly" @(ViewBag.OnSaleOnly == true ? "checked" : "") />
-                            <label class="form-check-label" for="onSaleOnly">
-                                Chỉ hiển thị sản phẩm giảm giá
-                            </label>
+                        <!-- Brands -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Thương hiệu</label>
+                            <div class="brand-filters">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="brandId" value="" id="brand-all"
+                                           @(ViewBag.BrandId == null ? "checked" : "") onchange="submitFilters()">
+                                    <label class="form-check-label" for="brand-all">Tất cả</label>
+                                </div>
+                                @foreach (var brand in (ViewBag.Brands as IEnumerable<GuhaStore.Core.Entities.Brand> ?? Enumerable.Empty<GuhaStore.Core.Entities.Brand>()))
+                                {
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="brandId" value="@brand.BrandId" id="brand-@brand.BrandId"
+                                               @(ViewBag.BrandId == brand.BrandId ? "checked" : "") onchange="submitFilters()">
+                                        <label class="form-check-label" for="brand-@brand.BrandId">@brand.BrandName</label>
+                                    </div>
+                                }
+                            </div>
                         </div>
 
-                        <button type="submit" class="btn btn-primary w-100">Lọc</button>
+                        <!-- Price Range -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Khoảng giá (₫)</label>
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <input type="number" class="form-control" name="minPrice" value="@ViewBag.MinPrice"
+                                           placeholder="Từ" min="0" onchange="submitFilters()" />
+                                </div>
+                                <div class="col-6">
+                                    <input type="number" class="form-control" name="maxPrice" value="@ViewBag.MaxPrice"
+                                           placeholder="Đến" min="0" onchange="submitFilters()" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sale Filter -->
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="true" id="onSaleOnly" name="onSaleOnly"
+                                       @(ViewBag.OnSaleOnly == true ? "checked" : "") onchange="submitFilters()" />
+                                <label class="form-check-label fw-bold" for="onSaleOnly">
+                                    <i class="fas fa-tags text-danger me-1"></i> Chỉ sản phẩm giảm giá
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Sort Options -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Sắp xếp theo</label>
+                            <select name="sortBy" class="form-select" onchange="submitFilters()">
+                                <option value="newest" selected="@(ViewBag.SortBy == "newest")">Mới nhất</option>
+                                <option value="price-asc" selected="@(ViewBag.SortBy == "price-asc")">Giá thấp đến cao</option>
+                                <option value="price-desc" selected="@(ViewBag.SortBy == "price-desc")">Giá cao đến thấp</option>
+                                <option value="name" selected="@(ViewBag.SortBy == "name")">Tên A-Z</option>
+                                <option value="sales" selected="@(ViewBag.SortBy == "sales")">Bán chạy nhất</option>
+                            </select>
+                        </div>
+
+                        <!-- Clear Filters -->
+                        @if (ViewBag.CategoryId != null || ViewBag.BrandId != null || ViewBag.MinPrice != null ||
+                             ViewBag.MaxPrice != null || ViewBag.OnSaleOnly == true || !string.IsNullOrEmpty(ViewBag.SearchTerm as string))
+                        {
+                            <div class="mb-3">
+                                <a href="~/Products" class="btn btn-outline-secondary w-100">
+                                    <i class="fas fa-times"></i> Xóa bộ lọc
+                                </a>
+                            </div>
+                        }
                     </form>
                 </div>
             </div>
@@ -140,3 +190,48 @@
     </div>
 </div>
 
+@section Scripts {
+    <script>
+        // Debounce function for input fields
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // Submit filters with debounce for input fields
+        const debouncedSubmit = debounce(() => {
+            document.getElementById('filterForm').submit();
+        }, 500);
+
+        function submitFilters() {
+            // For radio buttons and selects, submit immediately
+            if (event && (event.type === 'change' || event.target.type === 'radio' || event.target.tagName === 'SELECT')) {
+                document.getElementById('filterForm').submit();
+            } else {
+                // For input fields, use debounce
+                debouncedSubmit();
+            }
+        }
+
+        // Initialize price range validation
+        $(document).ready(function() {
+            $('input[name="minPrice"], input[name="maxPrice"]').on('input', function() {
+                const minPrice = parseInt($('input[name="minPrice"]').val()) || 0;
+                const maxPrice = parseInt($('input[name="maxPrice"]').val()) || 0;
+
+                if (maxPrice > 0 && minPrice > maxPrice) {
+                    $('input[name="minPrice"]')[0].setCustomValidity('Giá tối thiểu không được lớn hơn giá tối đa');
+                } else {
+                    $('input[name="minPrice"]')[0].setCustomValidity('');
+                }
+            });
+        });
+    </script>
+}

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\GuhaStorePHP\\GuhaStore.Infrastructure\\GuhaStore.Infrastructure.csproj": {}
+    "D:\\GuhaStore\\GuhaStore.Infrastructure\\GuhaStore.Infrastructure.csproj": {}
   },
   "projects": {
-    "D:\\GuhaStorePHP\\GuhaStore.Core\\GuhaStore.Core.csproj": {
+    "D:\\GuhaStore\\GuhaStore.Core\\GuhaStore.Core.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\GuhaStorePHP\\GuhaStore.Core\\GuhaStore.Core.csproj",
+        "projectUniqueName": "D:\\GuhaStore\\GuhaStore.Core\\GuhaStore.Core.csproj",
         "projectName": "GuhaStore.Core",
-        "projectPath": "D:\\GuhaStorePHP\\GuhaStore.Core\\GuhaStore.Core.csproj",
+        "projectPath": "D:\\GuhaStore\\GuhaStore.Core\\GuhaStore.Core.csproj",
         "packagesPath": "C:\\Users\\Manh Tran\\.nuget\\packages\\",
-        "outputPath": "D:\\GuhaStorePHP\\GuhaStore.Core\\obj\\",
+        "outputPath": "D:\\GuhaStore\\GuhaStore.Core\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Manh Tran\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -63,14 +63,14 @@
         }
       }
     },
-    "D:\\GuhaStorePHP\\GuhaStore.Infrastructure\\GuhaStore.Infrastructure.csproj": {
+    "D:\\GuhaStore\\GuhaStore.Infrastructure\\GuhaStore.Infrastructure.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\GuhaStorePHP\\GuhaStore.Infrastructure\\GuhaStore.Infrastructure.csproj",
+        "projectUniqueName": "D:\\GuhaStore\\GuhaStore.Infrastructure\\GuhaStore.Infrastructure.csproj",
         "projectName": "GuhaStore.Infrastructure",
-        "projectPath": "D:\\GuhaStorePHP\\GuhaStore.Infrastructure\\GuhaStore.Infrastructure.csproj",
+        "projectPath": "D:\\GuhaStore\\GuhaStore.Infrastructure\\GuhaStore.Infrastructure.csproj",
         "packagesPath": "C:\\Users\\Manh Tran\\.nuget\\packages\\",
-        "outputPath": "D:\\GuhaStorePHP\\GuhaStore.Infrastructure\\obj\\",
+        "outputPath": "D:\\GuhaStore\\GuhaStore.Infrastructure\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Manh Tran\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -85,8 +85,8 @@
           "net9.0": {
             "targetAlias": "net9.0",
             "projectReferences": {
-              "D:\\GuhaStorePHP\\GuhaStore.Core\\GuhaStore.Core.csproj": {
-                "projectPath": "D:\\GuhaStorePHP\\GuhaStore.Core\\GuhaStore.Core.csproj"
+              "D:\\GuhaStore\\GuhaStore.Core\\GuhaStore.Core.csproj": {
+                "projectPath": "D:\\GuhaStore\\GuhaStore.Core\\GuhaStore.Core.csproj"
               }
             }
           }

@@ -21,6 +21,8 @@ public interface IUnitOfWork : IDisposable
     IRepository<Inventory> Inventories { get; }
     IRepository<InventoryDetail> InventoryDetails { get; }
     IRepository<Metric> Metrics { get; }
+    IRepository<PaymentTransaction> PaymentTransactions { get; }
+    IRepository<Wishlist> Wishlists { get; }
     
     Task<int> SaveChangesAsync();
     Task BeginTransactionAsync();

@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("GuhaStore.Core")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b582a634742e027d6b806335aac045401cab816b")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7fa18373e8497c658fda90adba8269e4a3edba08")]
 [assembly: System.Reflection.AssemblyProductAttribute("GuhaStore.Core")]
 [assembly: System.Reflection.AssemblyTitleAttribute("GuhaStore.Core")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

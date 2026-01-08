@@ -26,6 +26,8 @@ public class ApplicationDbContext : DbContext
     public DbSet<Inventory> Inventories { get; set; }
     public DbSet<InventoryDetail> InventoryDetails { get; set; }
     public DbSet<Metric> Metrics { get; set; }
+    public DbSet<PaymentTransaction> PaymentTransactions { get; set; }
+    public DbSet<Wishlist> Wishlists { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -153,45 +155,39 @@ public class ApplicationDbContext : DbContext
             entity.HasIndex(e => new { e.ProductId, e.CapacityId }).IsUnique();
         });
 
-        // Order entity mapping
+        // Order entity mapping (simplified)
         modelBuilder.Entity<Order>(entity =>
         {
             entity.ToTable("orders");
             entity.HasKey(e => e.OrderId);
             entity.Property(e => e.OrderId).HasColumnName("order_id");
-            entity.Property(e => e.OrderCode).HasColumnName("order_code").IsRequired();
-            entity.Property(e => e.OrderDate).HasColumnName("order_date").HasMaxLength(50).IsRequired();
             entity.Property(e => e.AccountId).HasColumnName("account_id").IsRequired();
-            entity.Property(e => e.DeliveryId).HasColumnName("delivery_id").IsRequired();
+            entity.Property(e => e.OrderDate).HasColumnName("order_date").HasColumnType("datetime").IsRequired();
             entity.Property(e => e.TotalAmount).HasColumnName("total_amount").IsRequired();
-            entity.Property(e => e.OrderType).HasColumnName("order_type").IsRequired();
-            entity.Property(e => e.OrderStatus).HasColumnName("order_status").IsRequired();
+            entity.Property(e => e.OrderStatus).HasColumnName("status").IsRequired();
+            entity.Property(e => e.DeliveryName).HasColumnName("delivery_name").HasMaxLength(150);
+            entity.Property(e => e.DeliveryPhone).HasColumnName("delivery_phone").HasMaxLength(50);
+            entity.Property(e => e.DeliveryAddress).HasColumnName("delivery_address").HasColumnType("text");
 
             // Relationships
             entity.HasOne(o => o.Account)
                 .WithMany()
                 .HasForeignKey(o => o.AccountId)
                 .OnDelete(DeleteBehavior.Restrict);
-
-            entity.HasOne(o => o.Delivery)
-                .WithMany(d => d.Orders)
-                .HasForeignKey(o => o.DeliveryId)
-                .OnDelete(DeleteBehavior.Restrict);
         });
 
-        // OrderDetail entity mapping
+        // OrderDetail entity mapping (uses order_id FK)
         modelBuilder.Entity<OrderDetail>(entity =>
         {
             entity.ToTable("order_detail");
             entity.HasKey(e => e.OrderDetailId);
             entity.Property(e => e.OrderDetailId).HasColumnName("order_detail_id");
             entity.Property(e => e.OrderCode).HasColumnName("order_code").IsRequired();
-            entity.Property(e => e.ProductId).HasColumnName("product_id").IsRequired();
-            // Note: capacity_id may not exist in order_detail table - make it optional
+            entity.Property(e => e.ProductId).HasColumnName("product_id").IsRequired(false);
             entity.Property(e => e.CapacityId).HasColumnName("capacity_id").HasDefaultValue(0);
             entity.Property(e => e.ProductQuantity).HasColumnName("product_quantity").IsRequired();
             entity.Property(e => e.ProductPrice).HasColumnName("product_price").IsRequired();
-            entity.Property(e => e.ProductSale).HasColumnName("product_sale").IsRequired();
+            entity.Property(e => e.ProductSale).HasColumnName("product_sale").IsRequired(false);
 
             // Relationships
             entity.HasOne(od => od.Order)
@@ -362,6 +358,53 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.MetricOrder).HasColumnName("metric_order").IsRequired();
             entity.Property(e => e.MetricSales).HasColumnName("metric_sales").HasMaxLength(100).IsRequired();
             entity.Property(e => e.MetricQuantity).HasColumnName("metric_quantity").IsRequired();
+        });
+
+        // PaymentTransaction mapping -> payments table (simplified)
+        modelBuilder.Entity<PaymentTransaction>(entity =>
+        {
+            entity.ToTable("payments");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id).HasColumnName("payment_id").ValueGeneratedOnAdd();
+            entity.Property(e => e.TransactionId).HasColumnName("trans_id").HasMaxLength(100);
+            entity.Property(e => e.OrderCode).HasColumnName("order_id").IsRequired();
+            entity.Property(e => e.Provider).HasColumnName("method").HasMaxLength(50);
+            entity.Property(e => e.Amount).HasColumnName("amount").HasColumnType("decimal(18,2)").IsRequired();
+            entity.Property(e => e.Status).HasColumnName("status").HasMaxLength(20);
+            entity.Property(e => e.ProviderPayload).HasColumnName("provider_payload").HasColumnType("text");
+            entity.Property(e => e.CreatedAt).HasColumnName("payment_date").IsRequired(false);
+            entity.Property(e => e.UpdatedAt).HasColumnName("updated_at").IsRequired(false);
+
+            entity.HasOne(pt => pt.Order)
+                .WithMany()
+                .HasForeignKey(pt => pt.OrderCode)
+                .HasPrincipalKey(o => o.OrderCode)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        // Wishlist entity mapping
+        modelBuilder.Entity<Wishlist>(entity =>
+        {
+            entity.ToTable("wishlists");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id).HasColumnName("id").ValueGeneratedOnAdd();
+            entity.Property(e => e.AccountId).HasColumnName("account_id").IsRequired();
+            entity.Property(e => e.ProductId).HasColumnName("product_id").IsRequired();
+            entity.Property(e => e.AddedAt).HasColumnName("added_at").IsRequired();
+
+            // Relationships
+            entity.HasOne(w => w.Account)
+                .WithMany()
+                .HasForeignKey(w => w.AccountId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(w => w.Product)
+                .WithMany()
+                .HasForeignKey(w => w.ProductId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Unique constraint to prevent duplicate wishlist items
+            entity.HasIndex(e => new { e.AccountId, e.ProductId }).IsUnique();
         });
     }
 }
